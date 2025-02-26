@@ -2,7 +2,7 @@
 
 PUBG Mobile o'yinchilarining ma'lumotlarini ID bo'yicha qidirib topish va saqlash uchun qulay servis.
 
-![PUBG Mobile Player API](https://imgur.com/placeholder/400/200)
+![PUBG Mobile Player API](https://i.imgur.com/GTCRHEC.png)
 
 ## Imkoniyatlar
 
@@ -18,8 +18,8 @@ Loyihani ishga tushirish uchun quyidagi qadamlarni amalga oshiring:
 
 1. Loyihani klonlash:
 ```bash
-git clone https://github.com/sizning-github-username/pubg-mobile-player-info.git
-cd pubg-mobile-player-info
+git clone https://github.com/pul2es/pubg-mobile-id2name.git
+cd pubg-mobile-id2name
 ```
 
 2. Kerakli kutubxonalarni o'rnatish:

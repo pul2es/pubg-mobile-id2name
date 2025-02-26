@@ -2,7 +2,7 @@
 
 Удобный сервис для поиска и сохранения информации об игроках PUBG Mobile по ID.
 
-![PUBG Mobile Player API](https://imgur.com/placeholder/400/200)
+![PUBG Mobile Player API](https://i.imgur.com/GTCRHEC.png)
 
 ## Возможности
 
@@ -18,8 +18,8 @@
 
 1. Клонирование репозитория:
 ```bash
-git clone https://github.com/ваш-github-username/pubg-mobile-player-info.git
-cd pubg-mobile-player-info
+git clone https://github.com/pul2es/pubg-mobile-id2name.git
+cd pubg-mobile-id2name
 ```
 
 2. Установка необходимых библиотек:
