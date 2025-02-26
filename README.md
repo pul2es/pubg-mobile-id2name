@@ -2,12 +2,14 @@
 
 A service for searching and storing PUBG Mobile player information by ID.
 
+![PUBG Mobile Player API](https://i.imgur.com/GTCRHEC.png)
+
 ---
 
 **README in other languages:**
-- [🇺🇿 O'zbek tilida](./README.uz.md)
-- [🇷🇺 На русском языке](./README.ru.md)
-- [🇬🇧 In English](./README.en.md)
+- [➡️ O'zbek tilida](./README.uz.md)
+- [➡️ На русском языке](./README.ru.md)
+- [➡️ In English](./README.en.md)
 
 ---
 
