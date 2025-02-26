@@ -37,7 +37,7 @@ Open in browser: `http://localhost:3000`
 
 ## Screenshots
 
-![Application Interface](https://imgur.com/placeholder/800/400)
+![Application Interface](https://i.imgur.com/dOIzyAJ.png)
 
 ## License
 
