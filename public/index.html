@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PUBG Mobile Player API</title>
+  <style>
+    :root {
+      --primary: #6244c5;
+      --primary-hover: #4e36a0;
+      --secondary: #ffc107;
+      --secondary-light: #fff3cd;
+      --dark: #212529;
+      --light: #f8f9fa;
+      --danger: #dc3545;
+      --danger-hover: #bb2d3b;
+      --success: #20c997;
+      --info: #0dcaf0;
+      --gray: #6c757d;
+      --gray-light: #f1f1f1;
+      --border-radius: 8px;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: var(--dark);
+      background-color: #f5f8ff;
+      padding-bottom: 40px;
+    }
+    
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    header {
+      background: linear-gradient(135deg, var(--primary), #7356d0);
+      color: white;
+      padding: 30px 0;
+      text-align: center;
+      border-radius: 0 0 var(--border-radius) var(--border-radius);
+      margin-bottom: 30px;
+      box-shadow: var(--shadow);
+    }
+    
+    h1 {
+      font-size: 32px;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+    
+    h2 {
+      font-size: 24px;
+      margin-bottom: 16px;
+      color: var(--primary);
+      font-weight: 600;
+    }
+    
+    .subtitle {
+      font-size: 16px;
+      color: rgba(255, 255, 255, 0.9);
+    }
+    
+    .card {
+      background: white;
+      border-radius: var(--border-radius);
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow);
+      transition: transform 0.2s;
+    }
+    
+    .card:hover {
+      transform: translateY(-2px);
+    }
+    
+    .search-container {
+      display: flex;
+      margin-bottom: 16px;
+    }
+    
+    input {
+      flex: 1;
+      padding: 12px 16px;
+      font-size: 16px;
+      border: 2px solid #e1e5ee;
+      border-radius: var(--border-radius) 0 0 var(--border-radius);
+      transition: all 0.2s;
+    }
+    
+    input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+    
+    button {
+      padding: 12px 24px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    button svg {
+      margin-right: 8px;
+    }
+    
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      border-radius: 0 var(--border-radius) var(--border-radius) 0;
+    }
+    
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+    
+    .btn-secondary {
+      background: var(--secondary);
+      color: var(--dark);
+    }
+    
+    .btn-secondary:hover {
+      background: #e5ac06;
+    }
+    
+    .auth-container {
+      margin-bottom: 24px;
+      background-color: var(--secondary-light);
+      padding: 16px;
+      border-radius: var(--border-radius);
+      border-left: 4px solid var(--secondary);
+    }
+    
+    .btn-success {
+      background: var(--success);
+      color: white;
+      border-radius: 0 var(--border-radius) var(--border-radius) 0;
+    }
+    
+    .btn-success:hover {
+      background: #199974;
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: var(--primary);
+      display: none;
+    }
+    
+    .loading-spinner {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      border: 4px solid rgba(98, 68, 197, 0.2);
+      border-radius: 50%;
+      border-top-color: var(--primary);
+      animation: spin 1s ease-in-out infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .result {
+      display: none;
+    }
+    
+    .player-info {
+      margin-top: 16px;
+    }
+    
+    .player-info p {
+      margin-bottom: 8px;
+      padding: 8px 0;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .player-info p:last-child {
+      border-bottom: none;
+    }
+    
+    .player-info strong {
+      display: inline-block;
+      min-width: 120px;
+      color: var(--gray);
+    }
+    
+    .player-list {
+      margin-top: 40px;
+    }
+    
+    .player-item {
+      padding: 16px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .player-item:last-child {
+      border-bottom: none;
+    }
+    
+    .player-name {
+      font-weight: 600;
+      font-size: 18px;
+      color: var(--primary);
+    }
+    
+    .player-id {
+      color: var(--gray);
+      font-size: 14px;
+    }
+    
+    .player-timestamp {
+      color: var(--gray);
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+    
+    .btn-group {
+      display: flex;
+      gap: 8px;
+    }
+    
+    .btn-small {
+      padding: 6px 12px;
+      font-size: 13px;
+      border-radius: 4px;
+    }
+    
+    .btn-info {
+      background: var(--info);
+      color: white;
+    }
+    
+    .btn-info:hover {
+      background: #0bb5da;
+    }
+    
+    .btn-danger {
+      background: var(--danger);
+      color: white;
+    }
+    
+    .btn-danger:hover {
+      background: var(--danger-hover);
+    }
+    
+    .error {
+      color: var(--danger);
+      font-weight: bold;
+      padding: 8px 0;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 30px;
+      color: var(--gray);
+    }
+    
+    .empty-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+      color: #dee2e6;
+    }
+    
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 4px;
+      margin-left: 8px;
+    }
+    
+    .badge-fresh {
+      background-color: #e6f9f1;
+      color: var(--success);
+    }
+    
+    .badge-cached {
+      background-color: #e6f4ff;
+      color: #0d6efd;
+    }
+    
+    .section-divider {
+      height: 1px;
+      background-color: #eee;
+      margin: 30px 0;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .player-item {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .btn-group {
+        margin-top: 12px;
+        width: 100%;
+        justify-content: flex-end;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>PUBG Mobile Player API</h1>
+      <p class="subtitle">O'yinchilar ma'lumotlarini qidirish va saqlash uchun qulay interfeys</p>
+    </div>
+  </header>
+  
+  <div class="container">
+    <div class="card">
+      <h2>O'yinchi qidirish</h2>
+      <div class="search-container">
+        <input type="text" id="player-id" placeholder="PUBG Mobile o'yinchi ID raqamini kiriting">
+        <button id="search-button" class="btn-primary">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+          </svg>
+          Qidirish
+        </button>
+      </div>
+
+      <div class="auth-container">
+        <h2>Autentifikatsiya kaliti</h2>
+        <p style="margin-bottom: 16px;">API dan foydalanish uchun kalitni kiriting</p>
+        <div class="search-container">
+          <input type="password" id="auth-key" placeholder="Autentifikatsiya kalitini kiriting">
+          <button id="save-auth-button" class="btn-success">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
+            </svg>
+            Saqlash
+          </button>
+        </div>
+      </div>
+      
+      <div class="loading" id="loading">
+        <div class="loading-spinner"></div>
+        <p style="margin-top: 16px;">O'yinchi ma'lumotlari qidirilmoqda...</p>
+      </div>
+      
+      <div class="result" id="result">
+        <h2>O'yinchi ma'lumotlari</h2>
+        <div class="section-divider"></div>
+        <div id="player-info" class="player-info"></div>
+      </div>
+    </div>
+    
+    <div class="card" id="player-list">
+      <h2>Saqlab qo'yilgan o'yinchilar</h2>
+      <div class="section-divider"></div>
+      <div id="players-container"></div>
+    </div>
+  </div>
+  
+  <script>
+document.addEventListener('DOMContentLoaded', () => {
+  const searchButton = document.getElementById('search-button');
+  const playerIdInput = document.getElementById('player-id');
+  const authKeyInput = document.getElementById('auth-key');
+  const saveAuthButton = document.getElementById('save-auth-button');
+  const resultDiv = document.getElementById('result');
+  const playerInfoDiv = document.getElementById('player-info');
+  const loadingDiv = document.getElementById('loading');
+  const playersContainer = document.getElementById('players-container');
+  
+  // Auth keyni local storage'dan olish
+  let authKey = localStorage.getItem('pubg_auth_key') || '';
+  
+  // Agar auth key mavjud bo'lsa, input maydonini to'ldirish
+  if (authKey) {
+    authKeyInput.value = authKey;
+  }
+  
+  // Auth keyni saqlash
+  saveAuthButton.addEventListener('click', () => {
+    authKey = authKeyInput.value.trim();
+    if (authKey) {
+      localStorage.setItem('pubg_auth_key', authKey);
+      
+      // Muvaffaqiyatli xabar
+      const successAlert = document.createElement('div');
+      successAlert.style.padding = '10px';
+      successAlert.style.marginTop = '16px';
+      successAlert.style.backgroundColor = '#d4edda';
+      successAlert.style.color = '#155724';
+      successAlert.style.borderRadius = '4px';
+      successAlert.textContent = 'Autentifikatsiya kaliti muvaffaqiyatli saqlandi!';
+      
+      // Eski xabarni o'chirish
+      const oldAlert = authKeyInput.parentElement.parentElement.querySelector('.alert');
+      if (oldAlert) {
+        oldAlert.remove();
+      }
+      
+      // Yangi xabarni qo'shish
+      authKeyInput.parentElement.parentElement.appendChild(successAlert);
+      
+      // 3 soniyadan keyin xabarni o'chirish
+      setTimeout(() => {
+        successAlert.remove();
+      }, 3000);
+      
+      // Save button bosilganda ro'yxatni yangilash
+      fetchCachedPlayers();
+    } else {
+      const errorAlert = document.createElement('div');
+      errorAlert.style.padding = '10px';
+      errorAlert.style.marginTop = '16px';
+      errorAlert.style.backgroundColor = '#f8d7da';
+      errorAlert.style.color = '#721c24';
+      errorAlert.style.borderRadius = '4px';
+      errorAlert.textContent = 'Iltimos, to\'g\'ri kalitni kiriting!';
+      
+      // Eski xabarni o'chirish
+      const oldAlert = authKeyInput.parentElement.parentElement.querySelector('.alert');
+      if (oldAlert) {
+        oldAlert.remove();
+      }
+      
+      // Yangi xabarni qo'shish
+      authKeyInput.parentElement.parentElement.appendChild(errorAlert);
+      
+      // 3 soniyadan keyin xabarni o'chirish
+      setTimeout(() => {
+        errorAlert.remove();
+      }, 3000);
+    }
+  });
+  
+  // Saqlangan o'yinchilar ro'yxatini olish
+  fetchCachedPlayers();
+  
+  // Qidiruv tugmasini bosganda
+  searchButton.addEventListener('click', searchPlayer);
+  
+  // Enter bosish orqali qidirish
+  playerIdInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      searchPlayer();
+    }
+  });
+  
+  // O'yinchini qidirish funksiyasi
+  async function searchPlayer() {
+    const playerId = playerIdInput.value.trim();
+    
+    if (!playerId) {
+      showAlert('Iltimos, o\'yinchi ID raqamini kiriting', 'error');
+      return;
+    }
+    
+    if (!/^\d+$/.test(playerId)) {
+      showAlert('Iltimos, to\'g\'ri raqamli ID kiriting', 'error');
+      return;
+    }
+    
+    // Auth key tekshirish
+    if (!authKey) {
+      showAlert('Iltimos, avval autentifikatsiya kalitini kiriting va saqlang', 'error');
+      return;
+    }
+    
+    // Qidiruv boshlanganini ko'rsatish
+    loadingDiv.style.display = 'block';
+    resultDiv.style.display = 'none';
+    
+    try {
+      // API so'rovi
+      const response = await fetch(`/api/player/${playerId}?auth=${authKey}`);
+      const data = await response.json();
+      
+      // Natijani ko'rsatish
+      resultDiv.style.display = 'block';
+      loadingDiv.style.display = 'none';
+      
+      if (data.success === false) {
+        playerInfoDiv.innerHTML = `<p class="error">Xato: ${data.error}</p>`;
+      } else {
+        // Ma'lumot manbasiga qarab badge ko'rsatish
+        const sourceBadge = data.source === 'cache' ? 
+          '<span class="badge badge-cached">Keshdan</span>' : 
+          '<span class="badge badge-fresh">Yangilangan</span>';
+        
+        playerInfoDiv.innerHTML = `
+          <p><strong>O'yinchi ID:</strong> <span>${data.id}</span></p>
+          <p><strong>Taxallus:</strong> <span>${data.charac_name}</span></p>
+          <p><strong>Open ID:</strong> <span>${data.openid}</span></p>
+          <p><strong>Zona ID:</strong> <span>${data.zoneid}</span></p>
+          <p><strong>Ma'lumot manbasi:</strong> <span>${data.source} ${sourceBadge}</span></p>
+          <p><strong>Vaqt belgisi:</strong> <span>${new Date(data.timestamp).toLocaleString()}</span></p>
+        `;
+        
+        // Ro'yxatni yangilash
+        fetchCachedPlayers();
+      }
+    } catch (error) {
+      loadingDiv.style.display = 'none';
+      resultDiv.style.display = 'block';
+      playerInfoDiv.innerHTML = `<p class="error">Xato: ${error.message}</p>`;
+    }
+  }
+  
+  // Xabar ko'rsatish funksiyasi
+  function showAlert(message, type) {
+    const alertDiv = document.createElement('div');
+    alertDiv.style.padding = '10px';
+    alertDiv.style.marginTop = '16px';
+    alertDiv.style.borderRadius = '4px';
+    
+    if (type === 'error') {
+      alertDiv.style.backgroundColor = '#f8d7da';
+      alertDiv.style.color = '#721c24';
+    } else {
+      alertDiv.style.backgroundColor = '#d4edda';
+      alertDiv.style.color = '#155724';
+    }
+    
+    alertDiv.textContent = message;
+    alertDiv.className = 'alert';
+    
+    // Eski xabarni o'chirish
+    const oldAlert = playerIdInput.parentElement.parentElement.querySelector('.alert');
+    if (oldAlert) {
+      oldAlert.remove();
+    }
+    
+    // Yangi xabarni qo'shish
+    playerIdInput.parentElement.parentElement.appendChild(alertDiv);
+    
+    // 3 soniyadan keyin xabarni o'chirish
+    setTimeout(() => {
+      alertDiv.remove();
+    }, 3000);
+  }
+  
+  // Saqlangan o'yinchilar ro'yxatini olish
+  async function fetchCachedPlayers() {
+    try {
+      // Auth key tekshirish
+      if (!authKey) {
+        playersContainer.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">🔑</div>
+            <p>Saqlangan o'yinchilarni ko'rish uchun<br>autentifikatsiya kalitini kiriting va saqlang</p>
+          </div>
+        `;
+        return;
+      }
+      
+      const response = await fetch(`/api/players?auth=${authKey}`);
+      const data = await response.json();
+      
+      if (data.success) {
+        playersContainer.innerHTML = '';
+        
+        if (data.players.length === 0) {
+          playersContainer.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-icon">📝</div>
+              <p>Hozircha keshda o'yinchilar yo'q.<br>O'yinchilarni qidiring va ular bu yerda ko'rsatiladi.</p>
+            </div>
+          `;
+          return;
+        }
+        
+        data.players.forEach(player => {
+          const playerElement = document.createElement('div');
+          playerElement.className = 'player-item';
+          
+          const timeAgo = getTimeAgo(new Date(player.timestamp));
+          
+          playerElement.innerHTML = `
+            <div>
+              <div class="player-name">${player.charac_name}</div>
+              <div class="player-id">ID: ${player.id}</div>
+              <div class="player-timestamp">${timeAgo}</div>
+            </div>
+            <div class="btn-group">
+              <button class="btn-small btn-info search-again" data-id="${player.id}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                  <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z"/>
+                  <path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z"/>
+                </svg>
+                Yangilash
+              </button>
+              <button class="btn-small btn-danger delete-btn" data-id="${player.id}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                  <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z"/>
+                  <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1ZM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118ZM2.5 3h11V2h-11v1Z"/>
+                </svg>
+                O'chirish
+              </button>
+            </div>
+          `;
+          playersContainer.appendChild(playerElement);
+        });
+        
+        // "Search Again" tugmalarini ishlatish
+        document.querySelectorAll('.search-again').forEach(button => {
+          button.addEventListener('click', () => {
+            const id = button.getAttribute('data-id');
+            playerIdInput.value = id;
+            searchPlayer();
+            
+            // Yuqoriga skroll qilish
+            window.scrollTo({
+              top: 0,
+              behavior: 'smooth'
+            });
+          });
+        });
+        
+        // "Delete" tugmalarini ishlatish
+        document.querySelectorAll('.delete-btn').forEach(button => {
+          button.addEventListener('click', async () => {
+            const id = button.getAttribute('data-id');
+            
+            // Modal dialog yaratish
+            const modal = document.createElement('div');
+            modal.style.position = 'fixed';
+            modal.style.top = '0';
+            modal.style.left = '0';
+            modal.style.width = '100%';
+            modal.style.height = '100%';
+            modal.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+            modal.style.display = 'flex';
+            modal.style.alignItems = 'center';
+            modal.style.justifyContent = 'center';
+            modal.style.zIndex = '1000';
+            
+            const modalContent = document.createElement('div');
+            modalContent.style.backgroundColor = 'white';
+            modalContent.style.padding = '24px';
+            modalContent.style.borderRadius = '8px';
+            modalContent.style.maxWidth = '400px';
+            modalContent.style.width = '90%';
+            modalContent.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.2)';
+            
+            modalContent.innerHTML = `
+              <h3 style="margin-bottom: 16px;">O'chirish tasdiqlash</h3>
+              <p style="margin-bottom: 24px;">Haqiqatan ham ID: <strong>${id}</strong> o'yinchini o'chirmoqchimisiz?</p>
+              <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                <button id="cancel-delete" style="background-color: #f1f1f1; color: #333; padding: 8px 16px; border-radius: 4px; cursor: pointer; border: none;">Bekor qilish</button>
+                <button id="confirm-delete" style="background-color: var(--danger); color: white; padding: 8px 16px; border-radius: 4px; cursor: pointer; border: none;">O'chirish</button>
+              </div>
+            `;
+            
+            modal.appendChild(modalContent);
+            document.body.appendChild(modal);
+            
+            // Modal tugmalarini ishlatish
+            document.getElementById('cancel-delete').addEventListener('click', () => {
+              document.body.removeChild(modal);
+            });
+            
+            document.getElementById('confirm-delete').addEventListener('click', async () => {
+              try {
+                const response = await fetch(`/api/player/${id}?auth=${authKey}`, {
+                  method: 'DELETE'
+                });
+                const data = await response.json();
+                
+                document.body.removeChild(modal);
+                
+                if (data.success) {
+                  fetchCachedPlayers(); // Ro'yxatni yangilash
+                  
+                  // Muvaffaqiyatli xabar
+                  showAlert('O\'yinchi muvaffaqiyatli o\'chirildi', 'success');
+                } else {
+                  showAlert(`Xato: ${data.error}`, 'error');
+                }
+              } catch (error) {
+                document.body.removeChild(modal);
+                showAlert(`Xato: ${error.message}`, 'error');
+              }
+            });
+          });
+        });
+      } else {
+        playersContainer.innerHTML = `<p class="error">Xato: ${data.error || 'O\'yinchilarni olishda xatolik yuz berdi'}</p>`;
+      }
+    } catch (error) {
+      console.error('Error fetching cached players:', error);
+      playersContainer.innerHTML = `<p class="error">O\'yinchilarni olishda xatolik yuz berdi: ${error.message}</p>`;
+    }
+  }
+  
+  // Vaqt farqini olish funksiyasi
+  function getTimeAgo(date) {
+    const now = new Date();
+    const diff = now - date;
+    
+    const seconds = Math.floor(diff / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+    
+    if (days > 0) {
+      return `${days} kun oldin`;
+    } else if (hours > 0) {
+      return `${hours} soat oldin`;
+    } else if (minutes > 0) {
+      return `${minutes} daqiqa oldin`;
+    } else {
+      return `${seconds} soniya oldin`;
+    }
+  }
+});
+  </script>
+</body>
+</html>
